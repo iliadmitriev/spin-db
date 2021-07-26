@@ -68,6 +68,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+          - name: ETCD_INITIAL_CLUSTER_TOKEN
+            value: secret_token_for_etcd
           - name: PATRONI_NAME
             valueFrom:
               fieldRef:

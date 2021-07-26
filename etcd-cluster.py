@@ -40,7 +40,7 @@ signal.signal(signal.SIGINT, interrupt_handler)
 
 member_id = None
 
-SECRET_TOKEN = env.get('SECRET_TOKEN', 'test_token')
+ETCD_INITIAL_CLUSTER_TOKEN = env.get('ETCD_INITIAL_CLUSTER_TOKEN', 'test_token')
 
 CLIENT_PORT = env.get('CLIENT_PORT', 2379)
 SERVER_PORT = env.get('SERVER_PORT', 2380)
@@ -79,10 +79,11 @@ if not cluster_found:
         "--advertise-client-urls", f"{CLIENT_SCHEME}://{INSTANCE_IP}:{CLIENT_PORT}",
         "--listen-peer-urls", f"{CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}",
         "--initial-advertise-peer-urls", f"{CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}",
-        "--initial-cluster-token", f"{SECRET_TOKEN}",
         "--initial-cluster-state", "new"
     ]
-    subprocess.call(command, stdout=sys.stdout, preexec_fn=preexec_function)
+    command_env = env.copy()
+    command_env.update({'ETCD_INITIAL_CLUSTER_TOKEN': ETCD_INITIAL_CLUSTER_TOKEN})
+    subprocess.call(command, stdout=sys.stdout, preexec_fn=preexec_function, env=command_env)
 
 else:
 
@@ -155,7 +156,8 @@ else:
         "--advertise-client-urls", f"{CLIENT_SCHEME}://{INSTANCE_IP}:{CLIENT_PORT}",
         "--listen-peer-urls", f"{CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}",
         "--initial-advertise-peer-urls", f"{CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}",
-        "--initial-cluster-token", f"{SECRET_TOKEN}",
         "--initial-cluster-state", "existing"
     ]
-    subprocess.call(command, stdout=sys.stdout, preexec_fn=preexec_function)
+    command_env = env.copy()
+    command_env.update({'ETCD_INITIAL_CLUSTER_TOKEN': ETCD_INITIAL_CLUSTER_TOKEN})
+    subprocess.call(command, stdout=sys.stdout, preexec_fn=preexec_function, env=command_env)

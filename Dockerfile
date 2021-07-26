@@ -50,7 +50,6 @@ RUN chown -R postgres:postgres /etc/patroni /opt/etcd
 
 STOPSIGNAL SIGINT
 
-
 EXPOSE 5432 8008 8080 2379 2380
 
 CMD ["python3", "/opt/etcd/etcd-cluster.py"]
