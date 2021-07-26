@@ -7,6 +7,7 @@ import subprocess
 import shutil
 import signal
 
+# TODO: remove myself from a list of members in case of crush
 
 timeout = 10
 
@@ -100,6 +101,9 @@ else:
 
     client_url = CLIENT_REQUEST_URL
 
+    # TODO: find and remove my previous instance from cluster
+
+    # create entering cluster request
     add_response = requests.post(
         url=client_url,
         json={
