@@ -7,9 +7,8 @@ import subprocess
 import shutil
 import signal
 
-# TODO: remove myself from a list of members in case of crush
 
-timeout = 10
+TIMEOUT = 10
 
 
 def preexec_function():
@@ -25,7 +24,7 @@ def interrupt_handler(signum, frame):
         # curl http://10.0.0.10:2379/v2/members/272e204152 -XDELETE
         res = requests.delete(
             url=CLIENT_REQUEST_URL + f'/{member_id}',
-            timeout=timeout
+            timeout=TIMEOUT
         )
         if res.status_code == 204:
             print(f"Removed member {INSTANCE_ID}")
@@ -60,7 +59,7 @@ CLIENT_REQUEST_URL = f"{CLIENT_SCHEME}://{CLIENT_REQUEST_HOST}:{CLIENT_PORT}/v2/
 cluster_found = False
 
 try:
-    peer_urls_response = requests.get(url=CLIENT_REQUEST_URL, timeout=timeout)
+    peer_urls_response = requests.get(url=CLIENT_REQUEST_URL, timeout=TIMEOUT)
     response = peer_urls_response.json()
     cluster_found = True
 except requests.exceptions.ConnectionError:
@@ -87,13 +86,22 @@ if not cluster_found:
 else:
 
     initial_cluster = []
+    previous_instance_member_id = None
 
     for member in response.get('members'):
+        # get all instances from cluster
+        # except for the instance, which name is matching this adding instance
+        # TODO: get only working instances
+        #  and as for not working instances put them to list for further deletion
         if member.get('name') and member.get('peerURLs') \
-                and len(member.get('peerURLs')):
+                and len(member.get('peerURLs')) \
+                and (member.get('name') != INSTANCE_ID):
             name = member.get('name')
             peer_url_first = member.get('peerURLs').pop()
             initial_cluster.append(f'{name}={peer_url_first}')
+        # in case previous instance of etcd is found by name in cluster
+        if member.get('name') == INSTANCE_ID:
+            previous_instance_member_id = member.get('id')
 
     initial_cluster.append(f'{INSTANCE_ID}={CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}')
 
@@ -101,7 +109,17 @@ else:
 
     client_url = CLIENT_REQUEST_URL
 
-    # TODO: find and remove my previous instance from cluster
+    # remove found previous instance from cluster
+    if previous_instance_member_id:
+        remove_response = requests.delete(
+            url=f'{INSTANCE_ID}={CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}'
+                f'/v2/members/{previous_instance_member_id}',
+            timeout=TIMEOUT
+        )
+        if remove_response.status_code != 204:
+            print(f"Couldn't remove previous instance of {INSTANCE_ID} from cluster")
+            print(remove_response.status_code)
+            print(remove_response.text)
 
     # create entering cluster request
     add_response = requests.post(
@@ -112,7 +130,7 @@ else:
             ],
             'name': INSTANCE_ID
         },
-        timeout=timeout
+        timeout=TIMEOUT
     )
 
     if add_response.status_code != 201:
