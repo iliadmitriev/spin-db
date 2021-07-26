@@ -3,12 +3,12 @@ kind: Service
 metadata:
   labels:
     # should match with labels of deployment and pods
-    app: postgres-idm
-  name: postgres-db-idm-client
+    app: spindb-idm
+  name: spindb-svc
 spec:
   selector:
     # should match with labels of deployment and pods
-    app: postgres-idm
+    app: spindb-idm
   ports:
   - port: 2379
     protocol: TCP
@@ -19,38 +19,38 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-db-idm # .namespace.svc.cluster.local
+  name: spindb-svc # .namespace.svc.cluster.local
   labels:
-    app: postgres-idm
+    app: spindb
 spec:
   ports:
   - port: 5432
-    name: pg-service
+    name: pg-port
   - port: 2379
     name: client-port
   - port: 2380
     name: peer-port
   clusterIP: None
   selector:
-    app: postgres-idm
+    app: spindb-idm
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: postgres-idm # postgres-0.postgres-db.namespace.svc.cluster.local
+  name: spindb-idm # postgres-0.postgres-db.namespace.svc.cluster.local
 spec:
   selector:
     matchLabels:
-      app: postgres-idm
-  serviceName: postgres-db-idm # should match .metadata.name
+      app: spindb-idm
+  serviceName: spindb-svc # should match .metadata.name of headless service
   replicas: 3
   template:
     metadata:
       labels:
-        app: postgres-idm
+        app: spindb-idm
     spec:
       containers:
-      - name: postgres-idm-pod
+      - name: spindb-idm-pod
         imagePullPolicy: Always
         image: iliadmitriev/postgres-idm
         securityContext:
@@ -58,13 +58,13 @@ spec:
           runAsGroup: 0
         ports:
         - containerPort: 5432
-          name: pg-idm-data
+          name: pg-port
         - containerPort: 2379
           name: client-port
         - containerPort: 2380
           name: peer-port
         volumeMounts:
-        - name: postgres-idm-data-pvc
+        - name: spindb-idm-data-pvc
           mountPath: /data
         env:
           - name: DATA_DIR
@@ -87,26 +87,11 @@ spec:
             value: "$(CLIENT_REQUEST_HOST):2379"
           - name: PATRONI_POSTGRESQL_CONNECT_ADDRESS
             value: "$(POD_IP):5432"
-        envFrom:
-          - configMapRef:
-              name: postgres-config
   volumeClaimTemplates:
   - metadata:
-      name: postgres-idm-data-pvc
+      name: spindb-idm-data-pvc
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-          storage: 1Gi
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-config
-  labels:
-    app: postgres
-data:
-  POSTGRES_DB: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: secret
-  PGDATA: /data/pgdata
+          storage: 5Gi
