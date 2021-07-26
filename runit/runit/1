@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -eu
+
+chmod 100 /etc/runit/stopit
+

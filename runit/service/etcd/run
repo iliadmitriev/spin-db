@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+set -eu
+
+exec 2>&1
+
+COMMAND=/usr/bin/python3
+SCRIPT=/opt/etcd/etcd-cluster.py
+
+# Check command is executable or not
+test -x ${COMMAND} || exit 0
+
+# Check script is exists or not
+test -f ${SCRIPT} || exit 0
+
+exec ${COMMAND} ${SCRIPT}

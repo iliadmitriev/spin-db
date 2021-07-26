@@ -46,6 +46,7 @@ ENV PATH=$PATH:/opt/etcd \
 
 COPY postgres0.yml /etc/patroni/postgres0.yml
 COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
+COPY runit/* /etc/
 
 RUN chown -R postgres:postgres /etc/patroni /opt/etcd
 
@@ -53,4 +54,4 @@ STOPSIGNAL SIGINT
 
 EXPOSE 5432 8008 8080 2379 2380
 
-CMD ["/sbin/runit"]
+CMD ["/sbin/runit-init"]
