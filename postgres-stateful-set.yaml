@@ -4,35 +4,24 @@ metadata:
   labels:
     # should match with labels of deployment and pods
     app: spindb-idm
-  name: spindb-svc
+  name: spindb-svc # .namespace.svc.cluster.local
 spec:
   selector:
     # should match with labels of deployment and pods
     app: spindb-idm
   ports:
-  - port: 2379
-    protocol: TCP
-    targetPort: 2379
+    - name: client-port
+      port: 2379
+      protocol: TCP
+      targetPort: 2379
+    - name: peer-port
+      port: 2380
+      targetPort: 2380
+    - name: pg-port
+      port: 5432
+      targetPort: 5432
   type: ClusterIP
-  clusterIP: 10.98.98.156
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: spindb-svc # .namespace.svc.cluster.local
-  labels:
-    app: spindb
-spec:
-  ports:
-  - port: 5432
-    name: pg-port
-  - port: 2379
-    name: client-port
-  - port: 2380
-    name: peer-port
-  clusterIP: None
-  selector:
-    app: spindb-idm
+  clusterIP: 10.98.98.157
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -70,7 +59,7 @@ spec:
           - name: DATA_DIR
             value: /date/etcd.data
           - name: CLIENT_REQUEST_HOST
-            value: 10.98.98.156
+            value: 10.98.98.157
           - name: POD_NAME
             valueFrom:
               fieldRef:
