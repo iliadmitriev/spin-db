@@ -17,8 +17,9 @@ def preexec_function():
 
 
 def interrupt_handler(signum, frame):
-    print("Press ctrl+C")
+    print("Got SIGINT")
 
+    # Remove member from cluster when get SIGINT
     if member_id:
         print(f"Removing member {INSTANCE_ID} {INSTANCE_IP} {member_id} from cluster")
         # curl http://10.0.0.10:2379/v2/members/272e204152 -XDELETE
