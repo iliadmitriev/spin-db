@@ -1,6 +1,6 @@
 FROM alpine:3.14
 
-MAINTAINER ilia.dmitriev@gmail.com
+MAINTAINER Ilia Dmitriev ilia.dmitriev@gmail.com
 
 RUN set -xe \
     
@@ -38,6 +38,7 @@ RUN set -xe \
     && rm -rf /tmp/* \
     && apk del .build-deps \
     && find /var/log -type f -exec truncate --size 0 {} \;
+    && rm -rf /var/cache/apk/*
     
 ENV PATH=$PATH:/opt/etcd \
     LANG=ru_RU.UTF-8 \
@@ -52,4 +53,4 @@ STOPSIGNAL SIGINT
 
 EXPOSE 5432 8008 8080 2379 2380
 
-CMD ["python3", "/opt/etcd/etcd-cluster.py"]
+CMD ["/sbin/runit"]
