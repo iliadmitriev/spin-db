@@ -1,0 +1,8 @@
+# python virtual environment
+/venv/
+
+# test data directory
+/data/
+
+# IDE directory
+/.idea
