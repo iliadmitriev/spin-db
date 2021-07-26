@@ -112,7 +112,7 @@ else:
     # remove found previous instance from cluster
     if previous_instance_member_id:
         remove_response = requests.delete(
-            url=f'{INSTANCE_ID}={CLIENT_SCHEME}://{INSTANCE_IP}:{SERVER_PORT}'
+            url=f'{CLIENT_SCHEME}://{CLIENT_REQUEST_HOST}:{CLIENT_PORT}'
                 f'/v2/members/{previous_instance_member_id}',
             timeout=TIMEOUT
         )

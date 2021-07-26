@@ -28,7 +28,7 @@ RUN set -xe \
             ;; \
         "x86_64") \
             wget https://github.com/etcd-io/etcd/releases/download/v3.5.0/etcd-v3.5.0-linux-amd64.tar.gz \
-            -O /tmp/etcd-v3.5.0.tar.gz \
+                -O /tmp/etcd-v3.5.0.tar.gz \
             ;; \
         esac \
     && mkdir /opt/etcd \
