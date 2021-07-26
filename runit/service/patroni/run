@@ -7,4 +7,4 @@ COMMAND=/usr/bin/patroni
 CONFIG=/etc/patroni/postgres0.yml
 USER=postgres
 
-exec /usr/bin/chpst -u ${USER} ${COMMAND} ${CONFIG}
+exec /sbin/chpst -u ${USER} ${COMMAND} ${CONFIG}

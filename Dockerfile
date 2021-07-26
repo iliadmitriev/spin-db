@@ -48,7 +48,8 @@ COPY postgres0.yml /etc/patroni/postgres0.yml
 COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
 COPY runit /etc
 
-RUN chown -R postgres:postgres /etc/patroni /opt/etcd
+RUN chown -R postgres:postgres /etc/patroni /opt/etcd \
+    && chmod +x /etc/service/*/*
 
 STOPSIGNAL SIGINT
 
