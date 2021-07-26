@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    # should match with labels of deployment and pods
+    app: postgres-idm
+  name: postgres-db-idm-client
+spec:
+  selector:
+    # should match with labels of deployment and pods
+    app: postgres-idm
+  ports:
+  - port: 2379
+    protocol: TCP
+    targetPort: 2379
+  type: ClusterIP
+  clusterIP: 10.98.98.156
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-db-idm # .namespace.svc.cluster.local
+  labels:
+    app: postgres-idm
+spec:
+  ports:
+  - port: 5432
+    name: pg-service
+  - port: 2379
+    name: client-port
+  - port: 2380
+    name: peer-port
+  clusterIP: None
+  selector:
+    app: postgres-idm
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-idm # postgres-0.postgres-db.namespace.svc.cluster.local
+spec:
+  selector:
+    matchLabels:
+      app: postgres-idm
+  serviceName: postgres-db-idm # should match .metadata.name
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: postgres-idm
+    spec:
+      containers:
+      - name: postgres-idm-pod
+        imagePullPolicy: Always
+        image: iliadmitriev/postgres-idm
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+        ports:
+        - containerPort: 5432
+          name: pg-idm-data
+        - containerPort: 2379
+          name: client-port
+        - containerPort: 2380
+          name: peer-port
+        volumeMounts:
+        - name: postgres-idm-data-pvc
+          mountPath: /data
+        env:
+          - name: DATA_DIR
+            value: /date/etcd.data
+          - name: CLIENT_REQUEST_HOST
+            value: 10.98.98.156
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: PATRONI_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: PATRONI_ETCD_HOST
+            value: "$(CLIENT_REQUEST_HOST):2379"
+          - name: PATRONI_POSTGRESQL_CONNECT_ADDRESS
+            value: "$(POD_IP):5432"
+        envFrom:
+          - configMapRef:
+              name: postgres-config
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-idm-data-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: postgres
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: secret
+  PGDATA: /data/pgdata
