@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -eu
+
+exec 2>&1
+
+COMMAND=/usr/bin/patroni
+CONFIG=/etc/patroni/postgres0.yml
+USER=postgres
+
+exec /usr/bin/chpst -u ${USER} ${COMMAND} ${CONFIG}

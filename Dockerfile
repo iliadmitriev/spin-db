@@ -54,4 +54,4 @@ STOPSIGNAL SIGINT
 
 EXPOSE 5432 8008 8080 2379 2380
 
-CMD ["/sbin/runit-init"]
+CMD ["/usr/bin/runsvdir", "-P", "/etc/service"]
