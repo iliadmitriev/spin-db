@@ -37,7 +37,7 @@ RUN set -xe \
 # cleanup
     && rm -rf /tmp/* \
     && apk del .build-deps \
-    && find /var/log -type f -exec truncate --size 0 {} \;
+    && find /var/log -type f -exec truncate --size 0 {} \; \
     && rm -rf /var/cache/apk/*
     
 ENV PATH=$PATH:/opt/etcd \
