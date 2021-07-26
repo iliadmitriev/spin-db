@@ -19,7 +19,10 @@ RUN set -xe \
 # Install patroni, psycopg2
     && pip install --no-cache-dir patroni psycopg2 requests patroni[etcd] \
     
-# Install etcd 
+# Install etcd
+    && echo "$(uname -a)" \
+    && echo "$(uname -m)" \
+    && echo "$(uname -r)" \
     && case $(uname -m) in \
         "aarch64") \
             wget https://github.com/etcd-io/etcd/releases/download/v3.5.0/etcd-v3.5.0-linux-arm64.tar.gz \
