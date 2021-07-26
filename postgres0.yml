@@ -1,5 +1,6 @@
-scope: batman
+scope: main
 #namespace: /service/
+# this is set via PATRONI_NAME env variable
 name: postgres0
 
 restapi:
@@ -18,7 +19,8 @@ restapi:
 
 etcd:
   #Provide host to do the initial discovery of the cluster topology:
-  host: 10.98.98.156:2379
+  # this is set via PATRONI_ETCD_HOST variable
+  host: 127.0.0.1:2379
   #Or use "hosts" to provide multiple endpoints
   #Could be a comma separated string:
   #hosts: host1:port1,host2:port2
@@ -46,7 +48,10 @@ bootstrap:
     retry_timeout: 10
     maximum_lag_on_failover: 1048576
 #    master_start_timeout: 300
-    synchronous_mode: true
+    # synchronous_mode - sync commit,
+    # when master node awaits all
+    # slave nodes to finish commit
+    synchronous_mode: false
     #standby_cluster:
       #host: 127.0.0.1
       #port: 1111
@@ -107,13 +112,13 @@ postgresql:
   authentication:
     replication:
       username: replicator
-      password: rep-pass
+      password: test-rep-pass
     superuser:
       username: postgres
-      password: zalando
+      password: superusersecret
     rewind:  # Has no effect on postgres 10 and lower
       username: rewind_user
-      password: rewind_password
+      password: rewind_secret
   # Server side kerberos spn
 #  krbsrvname: postgres
   parameters:
