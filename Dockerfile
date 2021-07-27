@@ -9,9 +9,10 @@ RUN set -xe \
                     py3-pip runit haproxy pgbouncer \
     && mkdir -p /run/postgresql \
     && chown -R postgres:postgres /run/postgresql \
-    && mkdir -p /var/lib/postresql/data \
-    && chown postgres:postgres /var/lib/postresql/data \
-    && chown haproxy:haproxy /var/lib/haproxy \
+    && mkdir -p /var/lib/postresql \
+    && chown -R postgres:postgres /var/lib/postresql \
+    && mkdir -p /var/lib/haproxy \
+    && chown -R haproxy:haproxy /var/lib/haproxy \
 
 # Install build dependencies
     && apk add --no-cache --virtual .build-deps \

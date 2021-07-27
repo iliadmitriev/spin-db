@@ -65,7 +65,7 @@ spec:
               fieldRef:
                 fieldPath: status.podIP
           - name: ETCD_DATA_DIR
-            value: /date/etcd.data
+            value: /data/etcd.data
           - name: ETCD_INITIAL_CLUSTER_TOKEN
             value: secret_token_for_etcd
           - name: CLIENT_REQUEST_HOST
