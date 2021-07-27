@@ -6,7 +6,7 @@ name: postgres0
 restapi:
   listen: 0.0.0.0:8008
   # this is set via PATRONI_RESTAPI_CONNECT_ADDRESS env variable
-  connect_address: 0.0.0.0:8008
+  connect_address: 127.0.0.1:8008
 #  certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
 #  keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
 #  authentication:
@@ -63,7 +63,7 @@ bootstrap:
       parameters:
 #        wal_level: hot_standby
 #        hot_standby: "on"
-        max_connections: 100
+        max_connections: 120
 #        max_worker_processes: 8
 #        wal_keep_segments: 8
 #        max_wal_senders: 10
@@ -105,7 +105,7 @@ bootstrap:
 
 postgresql:
   listen: 0.0.0.0:5432
-  connect_address: 0.0.0.0:5432
+  connect_address: 127.0.0.1:5432
   # set from env variable PATRONI_POSTGRESQL_DATA_DIR
   data_dir: /var/lib/postgresql/data
 #  bin_dir:
