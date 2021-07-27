@@ -53,7 +53,7 @@ ENV PATH=$PATH:/opt/etcd \
 COPY runit /etc
 COPY --chown=postgres postgres0.yml /etc/patroni/postgres0.yml
 COPY --chown=postgres pgbouncer.ini /etc/pgbouncer/pgbouncer.ini
-COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
+COPY --chown=etcd etcd-cluster.py /opt/etcd/etcd-cluster.py
 COPY --chown=haproxy haproxy /etc/haproxy
 
 

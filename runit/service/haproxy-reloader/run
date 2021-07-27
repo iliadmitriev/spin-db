@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+set -eu
+
+exec 2>&1
+
+COMMAND=/usr/bin/python3
+SCRIPT=/etc/haproxy/haproxy-reloader.py
+USER=haproxy
+GROUP=haproxy
+
+# Check command is executable or not
+test -x ${COMMAND} || exit 0
+
+# Check script is exists or not
+test -f ${SCRIPT} || exit 0
+
+exec /sbin/chpst -u ${USER} ${COMMAND} ${SCRIPT}
