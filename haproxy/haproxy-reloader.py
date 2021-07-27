@@ -68,6 +68,7 @@ while True:
         # awaiting for new event or just wait ETCD_WATCH_TIMEOUT seconds
         event = client.watch(
             '/service/main/members',
+            timeout=ETCD_WATCH_TIMEOUT,
             recursive=True
         )
 
