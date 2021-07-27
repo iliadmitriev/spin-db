@@ -4,8 +4,9 @@ MAINTAINER Ilia Dmitriev ilia.dmitriev@gmail.com
 
 RUN set -xe \
     
-# Install postgres, python3, runit
-    && apk add --no-cache musl-locales python3 postgresql py3-pip runit \
+# Install postgres, python3, runit, haproxy, pgbouncer
+    && apk add --no-cache musl-locales python3 postgresql \
+                    py3-pip runit haproxy pgbouncer \
     && mkdir -p /run/postgresql \
     && chown -R postgres:postgres /run/postgresql \
     && mkdir -p /var/lib/posgtresql/data \
@@ -16,8 +17,9 @@ RUN set -xe \
             build-base python3-dev \
             linux-headers postgresql-dev \
             
-# Install patroni, psycopg2
+# Install patroni, psycopg2, jinja2
     && pip install --no-cache-dir patroni psycopg2 requests patroni[etcd] \
+                            jinja2 \
     
 # Install etcd
     && echo "Current etcd arch is $(uname -m)" \
@@ -44,12 +46,15 @@ ENV PATH=$PATH:/opt/etcd \
     LANG=ru_RU.UTF-8 \
     PGDATA=/var/lib/postgresql/data
 
-COPY postgres0.yml /etc/patroni/postgres0.yml
+COPY --chown=postgres postgres0.yml /etc/patroni/postgres0.yml
+COPY --chown=postgres pgbouncer.ini /etc/pgbouncer/pgbouncer.ini
 COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
 COPY runit /etc
+COPY haproxy-reloader.py /etc/haproxy/
 
-RUN chown -R postgres:postgres /etc/patroni /opt/etcd \
-    && chmod +x /etc/service/*/*
+RUN chown -R postgres:postgres /etc/patroni /var/log/pgbouncer \
+    && chmod +x /etc/service/*/* \
+    && chmod +x /etc/haproxy/haproxy-reloader.py
 
 STOPSIGNAL SIGINT
 

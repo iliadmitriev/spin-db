@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -eu
+
+exec 2>&1
+
+COMMAND=/usr/bin/pgbouncer
+CONFIG=/etc/pgbouncer/pgbouncer.ini
+USER=postgres
+
+exec /sbin/chpst -u ${USER} ${COMMAND} ${CONFIG}
