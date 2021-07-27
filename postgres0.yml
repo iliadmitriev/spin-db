@@ -5,6 +5,7 @@ name: postgres0
 
 restapi:
   listen: 0.0.0.0:8008
+  # this is set via PATRONI_RESTAPI_CONNECT_ADDRESS env variable
   connect_address: 0.0.0.0:8008
 #  certfile: /etc/ssl/certs/ssl-cert-snakeoil.pem
 #  keyfile: /etc/ssl/private/ssl-cert-snakeoil.key
