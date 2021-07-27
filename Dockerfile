@@ -11,6 +11,7 @@ RUN set -xe \
     && chown -R postgres:postgres /run/postgresql \
     && mkdir -p /var/lib/postresql/data \
     && chown postgres:postgres /var/lib/postresql/data \
+    && chown haproxy:haproxy /var/lib/haproxy \
 
 # Install build dependencies
     && apk add --no-cache --virtual .build-deps \
@@ -50,7 +51,7 @@ ENV PATH=$PATH:/opt/etcd \
 
 COPY runit /etc
 COPY --chown=postgres postgres0.yml /etc/patroni/postgres0.yml
-COPY --chown=pgbouncer pgbouncer.ini /etc/pgbouncer/pgbouncer.ini
+COPY --chown=postgres pgbouncer.ini /etc/pgbouncer/pgbouncer.ini
 COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
 COPY --chown=haproxy haproxy /etc/haproxy
 
