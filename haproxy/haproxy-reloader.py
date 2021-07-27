@@ -5,7 +5,10 @@ import json
 import re
 from jinja2 import Template
 from os import environ as env
+import socket
 import subprocess
+
+MY_NAME = socket.gethostname()
 
 
 def reload_haproxy(nodes):
@@ -27,6 +30,8 @@ def reload_haproxy(nodes):
     with open('/etc/haproxy/haproxy.cfg', 'w') as cfg:
         cfg.write(rendered)
     # finally reload haproxy service
+    print(MY_NAME, 'i had reset haproxy')
+    print(MY_NAME, 'new servers is = ', servers)
     subprocess.call(['/sbin/sv', 'restart', 'haproxy'])
 
 
@@ -63,7 +68,6 @@ while True:
         # awaiting for new event or just wait ETCD_WATCH_TIMEOUT seconds
         event = client.watch(
             '/service/main/members',
-            timeout=ETCD_WATCH_TIMEOUT,
             recursive=True
         )
 
