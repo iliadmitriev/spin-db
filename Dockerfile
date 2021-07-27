@@ -9,8 +9,8 @@ RUN set -xe \
                     py3-pip runit haproxy pgbouncer \
     && mkdir -p /run/postgresql \
     && chown -R postgres:postgres /run/postgresql \
-    && mkdir -p /var/lib/posgtresql/data \
-    && chown postgres:postgres /var/lib/posgtresql/data \
+    && mkdir -p /var/lib/postresql/data \
+    && chown postgres:postgres /var/lib/postresql/data \
 
 # Install build dependencies
     && apk add --no-cache --virtual .build-deps \
@@ -23,6 +23,7 @@ RUN set -xe \
     
 # Install etcd
     && echo "Current etcd arch is $(uname -m)" \
+    && adduser -D -H -u 120 etcd etcd \
     && case $(uname -m) in \
         "aarch64") \
             wget https://github.com/etcd-io/etcd/releases/download/v3.5.0/etcd-v3.5.0-linux-arm64.tar.gz \
@@ -35,6 +36,7 @@ RUN set -xe \
         esac \
     && mkdir /opt/etcd \
     && tar -xvf /tmp/etcd-v3.5.0.tar.gz -C /opt/etcd --strip-components=1 \
+    && chown -R etcd:etcd /opt/etcd \
     
 # cleanup
     && rm -rf /tmp/* \
@@ -46,13 +48,14 @@ ENV PATH=$PATH:/opt/etcd \
     LANG=ru_RU.UTF-8 \
     PGDATA=/var/lib/postgresql/data
 
-COPY --chown=postgres postgres0.yml /etc/patroni/postgres0.yml
-COPY --chown=postgres pgbouncer.ini /etc/pgbouncer/pgbouncer.ini
-COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
 COPY runit /etc
-COPY haproxy-reloader.py /etc/haproxy/
+COPY --chown=postgres postgres0.yml /etc/patroni/postgres0.yml
+COPY --chown=pgbouncer pgbouncer.ini /etc/pgbouncer/pgbouncer.ini
+COPY etcd-cluster.py /opt/etcd/etcd-cluster.py
+COPY --chown=haproxy haproxy /etc/haproxy
 
-RUN chown -R postgres:postgres /etc/patroni /var/log/pgbouncer \
+
+RUN chown -R postgres:postgres /etc/patroni \
     && chmod +x /etc/service/*/* \
     && chmod +x /etc/haproxy/haproxy-reloader.py
 

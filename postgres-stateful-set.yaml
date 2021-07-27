@@ -56,10 +56,6 @@ spec:
         - name: spindb-idm-data-pvc
           mountPath: /data
         env:
-          - name: DATA_DIR
-            value: /date/etcd.data
-          - name: CLIENT_REQUEST_HOST
-            value: 10.98.98.157
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -68,8 +64,12 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+          - name: ETCD_DATA_DIR
+            value: /date/etcd.data
           - name: ETCD_INITIAL_CLUSTER_TOKEN
             value: secret_token_for_etcd
+          - name: CLIENT_REQUEST_HOST
+            value: 10.98.98.157
           - name: PATRONI_NAME
             valueFrom:
               fieldRef:
@@ -80,6 +80,8 @@ spec:
             value: "$(POD_IP):5432"
           - name: PATRONI_RESTAPI_CONNECT_ADDRESS
             value: "$(POD_IP):8008"
+          - name: PATRONI_POSTGRESQL_DATA_DIR
+            value: /data/postgres
   volumeClaimTemplates:
   - metadata:
       name: spindb-idm-data-pvc

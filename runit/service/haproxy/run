@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+set -eu
+
+exec 2>&1
+
+COMMAND=/usr/sbin/haproxy
+CONFIG=/etc/haproxy/haproxy.cfg
+USER=haproxy
+GROUP=haproxy
+
+exec /sbin/chpst -u ${USER}:${GROUP} ${COMMAND} -- ${CONFIG}

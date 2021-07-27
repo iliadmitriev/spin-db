@@ -6,5 +6,10 @@ exec 2>&1
 COMMAND=/usr/bin/patroni
 CONFIG=/etc/patroni/postgres0.yml
 USER=postgres
+GROUP=postgres
 
-exec /sbin/chpst -u ${USER} ${COMMAND} ${CONFIG}
+test -n ${PATRONI_POSTGRESQL_DATA_DIR} || PATRONI_POSTGRESQL_DATA_DIR="/data/postgresql/data"
+
+test -d ${PATRONI_POSTGRESQL_DATA_DIR} || mkdir -p PATRONI_POSTGRESQL_DATA_DIR ; chown -R $USER:GROUP PATRONI_POSTGRESQL_DATA_DIR }
+
+exec /sbin/chpst -u ${USER}:${GROUP} ${COMMAND} ${CONFIG}

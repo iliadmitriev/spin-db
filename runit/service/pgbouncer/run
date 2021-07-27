@@ -5,6 +5,7 @@ exec 2>&1
 
 COMMAND=/usr/bin/pgbouncer
 CONFIG=/etc/pgbouncer/pgbouncer.ini
-USER=postgres
+USER=pgbouncer
+GROUP=postgres
 
-exec /sbin/chpst -u ${USER} ${COMMAND} ${CONFIG}
+exec /sbin/chpst -u ${USER}:${GROUP} ${COMMAND} ${CONFIG}

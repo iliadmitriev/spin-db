@@ -48,7 +48,7 @@ SERVER_PORT = env.get('SERVER_PORT', 2380)
 INSTANCE_ID = env.get('POD_NAME', socket.gethostname())
 INSTANCE_IP = env.get('POD_IP', '127.0.0.1')
 
-DATA_DIR = env.get('DATA_DIR', f"data/{INSTANCE_ID}")
+DATA_DIR = env.get('ETCD_DATA_DIR', f"data/{INSTANCE_ID}")
 
 CLIENT_SCHEME = env.get('CLIENT_SCHEME', 'http')
 PEER_SCHEME = env.get('PEER_SCHEME', 'http')

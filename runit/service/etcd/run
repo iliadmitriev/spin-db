@@ -5,6 +5,7 @@ exec 2>&1
 
 COMMAND=/usr/bin/python3
 SCRIPT=/opt/etcd/etcd-cluster.py
+USER=etcd
 
 # Check command is executable or not
 test -x ${COMMAND} || exit 0
@@ -12,4 +13,10 @@ test -x ${COMMAND} || exit 0
 # Check script is exists or not
 test -f ${SCRIPT} || exit 0
 
-exec ${COMMAND} ${SCRIPT}
+# Check if data directory set
+test -n ${ETCD_DATA_DIR} || ETCD_DATA_DIR="/data/etcd.data"
+
+# Check if data directory exists
+test -d ${ETCD_DATA_DIR} || { mkdir -p $ETCD_DATA_DIR ; chown -R etcd:etcd $ETCD_DATA_DIR }
+
+exec /sbin/chpst -u ${USER} ${COMMAND} ${CONFIG}
