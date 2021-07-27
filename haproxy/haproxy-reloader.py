@@ -5,6 +5,7 @@ import json
 import re
 from jinja2 import Template
 from os import environ as env
+import subprocess
 
 
 def reload_haproxy(nodes):
@@ -22,8 +23,11 @@ def reload_haproxy(nodes):
     rendered = Template(open('/etc/haproxy/haproxy.cfg.jinja2').read()).render({
         'servers': servers
     })
+    # write haproxy config to file
     with open('/etc/haproxy/haproxy.cfg', 'w') as cfg:
         cfg.write(rendered)
+    # finally reload haproxy service
+    subprocess.call(['/sbin/sv', 'restart', 'haproxy'])
 
 
 ETCD_HOST = env.get('ETCD_ENDPOINT', '127.0.0.1')

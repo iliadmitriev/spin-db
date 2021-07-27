@@ -5,8 +5,7 @@ exec 2>&1
 
 COMMAND=/usr/bin/python3
 SCRIPT=/etc/haproxy/haproxy-reloader.py
-USER=haproxy
-GROUP=haproxy
+USER=root
 
 # Check command is executable or not
 test -x ${COMMAND} || exit 0
