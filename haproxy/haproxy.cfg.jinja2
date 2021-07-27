@@ -19,7 +19,7 @@ listen stats
 
 listen master
     bind *:5000
-    option httpchk GET /master
+    option httpchk OPTIONS /master
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
     {% for server in servers -%}
@@ -30,7 +30,7 @@ listen master
 
 listen slave
     bind *:5001
-    option httpchk GET /replica
+    option httpchk OPTIONS /replica
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
     {% for server in servers -%}
