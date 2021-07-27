@@ -48,7 +48,7 @@ SERVER_PORT = env.get('SERVER_PORT', 2380)
 INSTANCE_ID = env.get('POD_NAME', socket.gethostname())
 INSTANCE_IP = env.get('POD_IP', '127.0.0.1')
 
-DATA_DIR = env.get('ETCD_DATA_DIR', f"data/{INSTANCE_ID}")
+DATA_DIR = env.get('ETCD_DATA_DIR', f"/data/etcd.data")
 
 CLIENT_SCHEME = env.get('CLIENT_SCHEME', 'http')
 PEER_SCHEME = env.get('PEER_SCHEME', 'http')
@@ -72,7 +72,6 @@ if not cluster_found:
 
     command = [
         "etcd",
-        "--data-dir", DATA_DIR,
         "--enable-v2",
         "--name", f"{INSTANCE_ID}",
         "--listen-client-urls", f"http://127.0.0.1:2379,{CLIENT_SCHEME}://{INSTANCE_IP}:{CLIENT_PORT}",
@@ -148,7 +147,6 @@ else:
 
     command = [
         "etcd",
-        "--data-dir", DATA_DIR,
         "--enable-v2",
         "--name", f"{INSTANCE_ID}",
         f"--initial-cluster", ','.join(initial_cluster),
