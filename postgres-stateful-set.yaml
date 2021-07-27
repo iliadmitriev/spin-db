@@ -81,7 +81,7 @@ spec:
           - name: PATRONI_RESTAPI_CONNECT_ADDRESS
             value: "$(POD_IP):8008"
           - name: PATRONI_POSTGRESQL_DATA_DIR
-            value: /data/postgres
+            value: /data/postgres/data
   volumeClaimTemplates:
   - metadata:
       name: spindb-idm-data-pvc
