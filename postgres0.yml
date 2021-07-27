@@ -59,7 +59,7 @@ bootstrap:
       #primary_slot_name: patroni
     postgresql:
       use_pg_rewind: true
-#      use_slots: true
+      use_slots: true
       parameters:
 #        wal_level: hot_standby
 #        hot_standby: "on"
@@ -104,7 +104,7 @@ bootstrap:
         - createdb
 
 postgresql:
-  listen: 0.0.0.0:5432
+  listen: *:5432
   connect_address: 127.0.0.1:5432
   # set from env variable PATRONI_POSTGRESQL_DATA_DIR
   data_dir: /var/lib/postgresql/data
