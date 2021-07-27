@@ -17,25 +17,14 @@ spec:
     - name: peer-port
       port: 2380
       targetPort: 2380
-    - name: pg-port
-      port: 5432
-      targetPort: 5432
+    - name: pg-master
+      port: 5000
+      targetPort: 5000
+    - name: pg-slave
+      port: 5001
+      targetPort: 5001
   type: ClusterIP
   clusterIP: 10.98.98.157
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: spindb-svc-out
-spec:
-  type: LoadBalancer
-  externalTrafficPolicy: Local
-  selector:
-    app: spindb-idm
-  ports:
-  - protocol: TCP
-    port: 7000
-    targetPort: 7000
 ---
 apiVersion: apps/v1
 kind: StatefulSet

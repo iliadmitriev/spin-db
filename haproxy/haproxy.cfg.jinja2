@@ -22,10 +22,10 @@ listen master
     option httpchk GET /master
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
-    {% for server in servers %}
-        server {{ server.name }} {{ server.host }}:{{ server.port }} maxconn 100 check port 8008
+    {% for server in servers -%}
+    server {{ server.host }}:6432 {{ server.host }}:6432 maxconn 100 check port 8008
     {% else %}
-        server postgresql_127.0.0.1_5432 127.0.0.1:5432 maxconn 100 check port 8008
+    server postgresql 127.0.0.1:6432 maxconn 100 check port 8008
     {% endfor %}
 
 listen slave
@@ -33,9 +33,9 @@ listen slave
     option httpchk GET /replica
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
-    {% for server in servers %}
-        server {{ server.name }} {{ server.host }}:{{ server.port }} maxconn 100 check port 8008
+    {% for server in servers -%}
+    server {{ server.host }}:6432 {{ server.host }}:6432 maxconn 100 check port 8008
     {% else %}
-        server postgresql_127.0.0.1_5432 127.0.0.1:5432 maxconn 100 check port 8008
+    server postgresql 127.0.0.1:6432 maxconn 100 check port 8008
     {% endfor %}
 
