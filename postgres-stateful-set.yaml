@@ -45,6 +45,16 @@ spec:
       - name: spindb-idm-pod
         imagePullPolicy: Always
         image: iliadmitriev/spin-db
+        readinessProbe:
+          httpGet:
+            scheme: HTTP
+            path: /readiness
+            port: 8008
+          initialDelaySeconds: 3
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
         securityContext:
           runAsUser: 0
           runAsGroup: 0
